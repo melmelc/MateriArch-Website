@@ -1,5 +1,5 @@
 <?php include 'conn.php'; 
-		$qkategori = "SELECT * FROM kategori"; // string query
+		$qkategori = "SELECT * FROM categories"; // string query
 		$stmt = $conn->query($qkategori);
 		if ($stmt->num_rows > 0) {
             while($row = $stmt->fetch_assoc()) {
@@ -68,11 +68,15 @@
 		</nav>
 		</header>
 
+		
 		<div id="content" class="site-content">
 			<div id="primary" class="content-area column full">
+			<h1><b> Trending Materials</b> </h1>
+			<br>
+			<br>
 				<main id="main" class="site-main">
 				<div class="grid portfoliogrid">
-				
+					
 					<article class="hentry">
 					<header class="entry-header">
 					<div class="entry-thumbnail">
@@ -106,42 +110,6 @@
 					<a class='portfoliotype' href='portfolio-category.html'>summer</a>
 					<a class='portfoliotype' href='portfolio-category.html'>woman</a>
 					<a class='portfoliotype' href='portfolio-category.html'>yellow</a>
-					</header>
-					</article>
-					
-					<article class="hentry">
-					<header class="entry-header">
-					<div class="entry-thumbnail">
-						<a href="portfolio-item.html"><img src="http://s3.amazonaws.com/caymandemo/wp-content/uploads/sites/15/2015/09/18160911/p6.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="p1"/></a>
-					</div>
-					<h2 class="entry-title"><a href="portfolio-item.html" rel="bookmark">Hot Afternoon</a></h2>
-					<a class='portfoliotype' href='portfolio-category.html'>pink</a>
-					<a class='portfoliotype' href='portfolio-category.html'>woman</a>
-					<a class='portfoliotype' href='portfolio-category.html'>yellow</a>
-					</header>
-					</article>
-					
-					<article class="hentry">
-					<header class="entry-header">
-					<div class="entry-thumbnail">
-						<a href="portfolio-item.html"><img src="http://s3.amazonaws.com/caymandemo/wp-content/uploads/sites/15/2015/09/15223245/p2.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="p1"/></a>
-					</div>
-					<h2 class="entry-title"><a href="portfolio-item.html" rel="bookmark">Long Walks</a></h2>
-					<a class='portfoliotype' href='portfolio-category.html'>hat</a>
-					<a class='portfoliotype' href='portfolio-category.html'>summer</a>
-					<a class='portfoliotype' href='portfolio-category.html'>yellow</a>
-					</header>
-					</article>
-					
-					<article class="hentry">
-					<header class="entry-header">
-					<div class="entry-thumbnail">
-						<a href="portfolio-item.html"><img src="http://s3.amazonaws.com/caymandemo/wp-content/uploads/sites/15/2015/09/15222855/p7.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="p1"/></a>
-					</div>
-					<h2 class="entry-title"><a href="portfolio-item.html" rel="bookmark">Twilight</a></h2>
-					<a class='portfoliotype' href='portfolio-category.html'>hat</a>
-					<a class='portfoliotype' href='portfolio-category.html'>woman</a>
-					<a class='portfoliotype' href='portfolio-category.html'>summer</a>
 					</header>
 					</article>
 					

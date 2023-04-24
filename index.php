@@ -1,6 +1,6 @@
 		<?php include 'header.html';?> 
 		<?php include 'conn.php'; 
-		$qkategori = "SELECT * FROM kategori"; // string query
+		$qkategori = "SELECT * FROM categories"; // string query
 		$stmt = $conn->query($qkategori);
 		if ($stmt->num_rows > 0) {
             while($row = $stmt->fetch_assoc()) {
