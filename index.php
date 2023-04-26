@@ -1,6 +1,6 @@
-		<?php include 'header.html';?> 
-		<?php include 'conn.php'; 
-		$qkategori = "SELECT * FROM categories"; // string query
+<?php include 'header.html';?> 
+		<!-- <?php include 'conn.php'; 
+		$qkategori = "SELECT * FROM kategori"; // string query
 		$stmt = $conn->query($qkategori);
 		if ($stmt->num_rows > 0) {
             while($row = $stmt->fetch_assoc()) {
@@ -12,7 +12,7 @@
             printf('No record found.<br />');
          }
          mysqli_free_result($stmt);
-		?>
+		?> -->
 
 		<div id="content" class="site-content">
 			<div id="primary" class="content-area column full">

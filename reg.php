@@ -1,4 +1,4 @@
-<?php include 'header.html';?>
+<?php include 'header2.html';?>
 <?php include "conn.php"; 
 if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['email']))
 {
@@ -20,8 +20,8 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
         if ($conn->query($query1) === TRUE) {
             echo
             "<script language=javascript>
-            alert('Sent Successfully');
-            document.location.href = 'loginHome.php';
+            alert('Register Success');
+            document.location.href = 'account.php';
             </script>
             ";
 
@@ -42,8 +42,8 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
         if ($conn->query($query2) === TRUE) {
             echo
             "<script language=javascript>
-            alert('Sent Successfully');
-            document.location.href = 'loginHome.php';
+            alert('Register Success');
+            document.location.href = 'account.php';
             </script>
             ";
 
@@ -60,111 +60,21 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
 ?>
 
 
-<script>
-$(document).ready(function(){
-    $('button[type="button"]').click(function(){
-    	var rolevalue = $(this).val(); 
-        $("div.myDiv").hide();
-        $("#Form"+rolevalue).show();
-    });
-});
-</script>
-<script>
-function toggleField(hideObj,showObj){
-  hideObj.disabled=true;        
-  hideObj.style.display='none';
-  showObj.disabled=false;   
-  showObj.style.display='inline';
-  showObj.focus();}
-</script>
 
-
-<!-- <h2> Register As :</h2>
-<form method="post">
-    <button type="button" class="" name="role" value="Buyer" style="color:blue">Buyer</button>
-    <button type="button" class="" name="role" value="Craftman" style="color:brown">Craftmen</button>
-    <br>
-    <br>
-</form> -->
-<!-- 
-<div id="FormBuyer" class="myDiv" style="display: none;">
-        <h2>Customer Registration Form</h2>
+<div style="padding:40px;">
+    <h3>Customer Registration Form</h3>
         <form id="f1" method="POST">
-            <h4>Customer Name :</h4>
-            <input type="text" id="custname" name="custname" placeholder="Enter name" style="width: 50%"><br><br>
-            <h4>Address :</h4>
-            <input type="text" id="addr" name="addr" placeholder="Enter address"><br><br>
-            <h4>City :</h4>
-            <h4><select name="cityname" 
-            onchange="if(this.options[this.selectedIndex].value=='customOption'){
-                toggleField(this,this.nextSibling);
-                this.selectedIndex='0';
-            }">
-            <?php 
-                    $sql = mysqli_query($conn, "SELECT city_name FROM cities");
-                    while ($row = $sql->fetch_assoc()){
-                    echo "<option>" . $row['city_name'] . "</option>";
-                    }
-                    ?>
-            </select></h4>
-            <input name="cityname" style="display:none;" disabled="disabled" 
-                onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
-            <br>
-            <h4>Email :</h4>
-            <input type="text" id="email" name="email" placeholder="Enter email"><br>
-            <h5><label for="pass">Password :</label><br></h5>
-            <input type="password" id="pass" name="pass" placeholder="Enter Password"><br><br>
-            <button type="submit" class="btn btn-primary" name="submit">Sign Up</button>
-        </form>
-    </div>
-
-    <div id="FormCraftman" class="myDiv" style="display: none;">
-        <h2>Craftmen / Company Registration Form</h2>
-        <br>
-        <form id="f2" method="POST" >
-            <h4>Craftmen / Company Name :</h4>
-            <input type="text" id="cname" name="cname" placeholder="Enter name" required><br><br>
-            <h4>Address :</h4>
-            <input type="text" id="addr2" name="addr2" placeholder="Enter address" required><br><br>
-            <h4>City :</h4>
-            <h4><select name="cityname" 
-            onchange="if(this.options[this.selectedIndex].value=='customOption'){
-                toggleField(this,this.nextSibling);
-                this.selectedIndex='0';
-            }">
-            <?php 
-                    $sql = mysqli_query($conn, "SELECT city_name FROM cities");
-                    while ($row = $sql->fetch_assoc()){
-                    echo "<option>" . $row['city_name'] . "</option>";
-                    }
-                    ?> 
-            </select></h4>
-            <input name="cityname" style="display:none;" disabled="disabled" 
-                onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
-            <br>
-            <h4>Email :</h4>
-            <input type="text" id="email2" name="email2" placeholder="Enter email" required><br><br>
-            <h4>Password :</h4>
-            <input type="password" id="pass2" name="pass2" placeholder="Enter password" required><br><br>
-            <button type="submit" class="btn btn-primary" name="submit">Sign Up</button>
-        </form>
-    </div> -->
-
-
-
-    <h2>Customer Registration Form</h2>
-        <form id="f1" method="POST">
-            <h4>Register As :</h4>
-            <h4><select name="role" required>
+            <h6>Register As :</h6>
+            <h6><select name="role" required>
                 <option value="Buyer">Buyer</option>
                 <option value="Craftman">Craftman</option>
-            </select></h4>
-            <h4> Client / Company Name :</h4>
-            <input type="text" id="custname" name="custname" placeholder="Enter name" required><br><br>
-            <h4>Address :</h4>
-            <input type="text" id="addr" name="addr" placeholder="Enter address" required><br><br>
-            <h4>City :</h4>
-            <h4><select name="cityname" 
+            </select></h6>
+            <h6> Client / Company Name :</h6>
+            <input type="text" id="custname" name="custname" placeholder="Enter name" required><br>
+            <h6>Address :</h6>
+            <input type="text" id="addr" name="addr" placeholder="Enter address" required><br>
+            <h6>City :</h6>
+            <h6><select name="cityname" 
             onchange="if(this.options[this.selectedIndex].value=='customOption'){
                 toggleField(this,this.nextSibling);
                 this.selectedIndex='0';
@@ -175,22 +85,18 @@ function toggleField(hideObj,showObj){
                     echo "<option>" . $row['city_name'] . "</option>";
                     }
                     ?>
-            </select></h4>
+            </select></h6>
             <input name="cityname" style="display:none;" disabled="disabled" 
                 onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
-            <br>
-            <h4>Email :</h4>
+            <h6>Email :</h6>
             <input type="text" id="email" name="email" placeholder="Enter email" required><br>
-            <h5><label for="pass">Password :</label><br></h5>
+            <h6><label for="pass">Password :</label><br></h6>
             <input type="password" id="pass" name="pass" placeholder="Enter Password" required><br><br>
             <button type="submit" class="btn btn-primary" name="submit">Sign Up</button>
         </form>
-<br>
-<br>
-
-
-<h5>Already have an account ? <a href="account.php">Sign In</a></h5> 
+    <br>
+    <h5>Already have an account ? <a href="account.php">Sign In</a></h5> 
 </div>
-<?php include 'footer.html'; ?>
-</div>
+
+<?php include 'footer2.html'; ?>
 </body>
