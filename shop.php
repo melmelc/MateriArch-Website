@@ -1,6 +1,11 @@
-<?php include 'header.html'; ?>
-		<!-- #masthead -->
-		<div id="content" class="site-content">
+<?php include 'headerA.html'; ?>
+<style>
+div#main{
+	padding: 40px;
+}
+</style>
+<body>
+	<div id="main" >
 			<div id="primary" class="content-area column full">
 				<main id="main" class="site-main" role="main">
 				<p class="woocommerce-result-count">
@@ -91,21 +96,15 @@
 					<li><a class="next page-numbers" href="#">→</a></li>
 				</ul>
 				</nav>
-				</main>
-				<!-- #main -->
+	
 			</div>
-			<!-- #primary -->
-		</div>
-		<!-- #content -->
 	</div>
-	<!-- .container -->
-	<?php include 'footer.html' ?>
-	<a href="#top" class="smoothup" title="Back to top"><span class="genericon genericon-collapse"></span></a>
-</div>
-<!-- #page -->
+</body>
+
+<a href="#top" class="smoothup" title="Back to top"><span class="genericon genericon-collapse"></span></a>
+<?php include 'footer2.html' ?>
 <script src='js/jquery.js'></script>
 <script src='js/plugins.js'></script>
 <script src='js/scripts.js'></script>
 <script src='js/masonry.pkgd.min.js'></script>
-</body>
 </html>

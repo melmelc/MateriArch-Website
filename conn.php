@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "test";
+$database = "materiarch2";
 try {
  //Creating a connection
  $conn = mysqli_connect($servername, $username, $password, $database);

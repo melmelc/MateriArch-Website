@@ -1,12 +1,12 @@
-<?php include 'header2.html';?>
+<?php include 'header.html';?>
 <?php include "conn.php"; 
 if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['email']))
 {
     $ro = $_POST['role'];
-    $uname = $_POST['custname'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['pass'], PASSWORD_DEFAULT);
-    $address = $_POST['addr'];
+    $uname = trim($_POST['custname']);
+    $email = trim($_POST['email']);
+    $password = password_hash(trim($_POST['pass']), PASSWORD_DEFAULT);
+    $address = trim($_POST['addr']);
     $city = $_POST['cityname'];
     $cquery = "SELECT city_id FROM cities WHERE city_name = '" .$city ."'";
     $result = $conn->query($cquery);
@@ -14,7 +14,7 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
   
     if($ro == "Buyer") {
         
-        $query1 = "INSERT INTO buyers (b_name,b_address,b_city,b_email,b_password) VALUES 
+        $query1 = "INSERT INTO customer (customer_name,customer_address,customer_city,customer_email,customer_password) VALUES 
         ('$uname','$address','$sresult','$email','$password')";
         
         if ($conn->query($query1) === TRUE) {
@@ -36,7 +36,7 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
 
     }
     elseif ($ro == "Craftman") {
-        $query2 = "INSERT INTO companies (c_name,c_address,c_city,c_email,c_pass) VALUES 
+        $query2 = "INSERT INTO company (company_name,company_address,company_city,company_email,company_password) VALUES 
         ('$uname','$address','$sresult','$email','$password')";
         
         if ($conn->query($query2) === TRUE) {
@@ -60,12 +60,21 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
 ?>
 
 
-
-<div style="padding:40px;">
+<style>
+div#main{
+	padding: 40px;
+}
+div#article{
+    display: flex;
+}
+</style>
+<body>
+<div id="main">
     <h3>Customer Registration Form</h3>
         <form id="f1" method="POST">
             <h6>Register As :</h6>
             <h6><select name="role" required>
+                <option default></option>
                 <option value="Buyer">Buyer</option>
                 <option value="Craftman">Craftman</option>
             </select></h6>
@@ -78,7 +87,8 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
             onchange="if(this.options[this.selectedIndex].value=='customOption'){
                 toggleField(this,this.nextSibling);
                 this.selectedIndex='0';
-            }">
+            }" required>
+            <option default></option>
             <?php 
                     $sql = mysqli_query($conn, "SELECT city_name FROM cities");
                     while ($row = $sql->fetch_assoc()){
@@ -97,6 +107,6 @@ if (isset($_POST['submit']) AND isset($_POST['custname']) AND isset($_POST['emai
     <br>
     <h5>Already have an account ? <a href="account.php">Sign In</a></h5> 
 </div>
+</body>
 
 <?php include 'footer2.html'; ?>
-</body>

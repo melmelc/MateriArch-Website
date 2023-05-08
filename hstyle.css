@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-body{
-   
-}
 header{
     background-color: blanchedalmond;
     padding-left:50px; padding-right: 50px;
@@ -77,4 +74,8 @@ header{
     margin-top: -35px;
   }
 
-  
+  div#main{
+    padding-left: 60px;
+      padding-right: 60px;
+      padding-top: 20px;
+  }
