@@ -21,6 +21,7 @@ header{
 }
 #navbar{
     background-color: blanchedalmond;
+  
 }
 #nav {
     list-style: none inside;
@@ -43,10 +44,11 @@ header{
     width: 150px;
     line-height: 35px;
     color: #000000;
+    font-weight: 500;
   }
   
   #nav li li a {
-    font-size: 80%;
+    font-size: 100%;
   }
   
   #nav li:hover {

@@ -1,42 +1,25 @@
 <?php include 'conn.php';
+include 'header.html';
 
-if(isset($_POST['sub'])) {
-    if(isset($_POST['name']) and isset($_POST['myfile'])) {
-        $name = trim($_POST['name']);
-        $fil = $_POST['myfile'];
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimetype = finfo_file($finfo, $fil);
-        finfo_close($finfo);
-
-        $query = "SELECT cat_pic FROM category where category_id = 1";
-        // "INSERT INTO category (category_name, cat_pic) VALUES ('$name','$fil')";
+    if(isset($_POST['sub'])) {
+        $name = trim($_POST['cname']);
+        $file_name = $_FILES['myfile']['name'];
+        $query = "INSERT INTO category (category_name, cat_pic) VALUES ('$name','$file_name')";
 
         if ($conn->query($query) === TRUE) {
-            // echo
-            // "<script language=javascript>
-            // alert('New Category Added Successfully');
-            // </script>
-            // ";
-            $result = $conn->query($query1);
-            $row = $result->fetch_assoc();
-            $cat_pic = $row['cat_pic'];
-            $image = base64_encode( $cat_pic );
-            $mimetype = 'image/jpg';
-
-            echo "<img src='data:$mimetype;base64,$image'>";
-            
-            unset($name,$fil);
-
-          } else {
-            echo '<script language="javascript">';
-            echo 'alert("Error: " . $query1 . "<br>" . $conn->error;)';
-            echo '</script>';
-          
+            echo
+            "<script language=javascript>
+            alert('New Category Added Successfully');
+            </script>
+            ";
+            unset($name);
+            unset($file_name);
+        }
+        else {
+            echo "ERROR DUPLICATE DATA";
+        }
     }
-}
-}
-
-
+    echo"<img src='assets/".$cat_pic."' style='width:50px'>";
 ?>
 
 <!Doctype html>
@@ -52,15 +35,19 @@ if(isset($_POST['sub'])) {
     </head>
 
     <body>
-    
+    <div style="padding:40px">
     <h3>Add new request</h3>
-            <form action="#" method="post">
-                <label for="name"><h6>Category name :</h6></label>
-                <input type="text" id="name" name="name" required><br>
+            <form action="cat.php" method="post" enctype="multipart/form-data">
+                <label for="cname"><h6>Category name :</h6></label>
+                <input type="text" id="cname" name="cname" required><br>
                 <label for="title"><h6>Select picture :</h6></label>
                 <input type="file" id="myfile" name="myfile" accept="image/*"required>
                 <button type="submit" name="sub">Submit</button>
             </form>
+
+
+    </div>
+    
 
             </body>
             </html>

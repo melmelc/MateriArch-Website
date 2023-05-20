@@ -45,9 +45,23 @@ div#main{
 </div>
 <div id="main" style="display:flex">
 <?php 
+  $x = 0;
+  $bool = true;
+  $arr = array();
+  while(true) {
+  $id = random_int(1,5);
+  if(!in_array($id,$arr)) {
+    array_push($arr,$id);
+  }
+  if(sizeof($arr) == 3) {
+    break;
+  }
+  
+  
+  }
 
-  $id = 1;
-  $query = "SELECT * from category WHERE category_id=".$id;
+  foreach($arr as $i) {
+  $query = "SELECT * from category WHERE category_id=".$i;
   if($conn->query($query) == TRUE) {
     $result = $conn->query($query);
     $row = $result->fetch_assoc();
@@ -57,7 +71,7 @@ div#main{
 <div class='card-deck'>
   <a href='http://google.com'>
       <div class='card'>
-        <img style='clip-path:circle()' src='assets/Vector.png'>
+        <img style='border:3px solid chocolate; border-radius: 50%; width: 200px;height: 200px;object-fit: cover; margin-left:10px' src='assets/".$image."'>
           <div class='card-body'>
           <h3 class='card-sub align-middle'>" .$category. "</h3>
           <p class='desc'>Lorem ipsum dolor sit amet</p>
@@ -68,63 +82,14 @@ div#main{
     </a>
 </div>
 </div>";
+
   }
+}
+
 
 
 ?>
 	
-  <div class="container">
-    <div class="card-deck">
-      <a href="http://google.com">
-          <div class="card">
-            <img style="clip-path:circle()" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Alberobello_BW_2016-10-16_13-43-03.jpg/250px-Alberobello_BW_2016-10-16_13-43-03.jpg" alt="Card image cap">
-              <div class="card-body">
-              <h3 class="card-sub align-middle">Card Title</h3>
-              <p class="desc">Lorem ipsum dolor sit amet</p>
-                <small><p class="time-card">2 Days Ago</p></small>
-            </div>
-        
-          </div>
-        </a>
-    </div>
-  </div>
-  <div class="container">
-    <div class="card-deck">
-      <a href="http://google.com">
-          <div class="card">
-            <img style="clip-path:circle()" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Alberobello_BW_2016-10-16_13-43-03.jpg/250px-Alberobello_BW_2016-10-16_13-43-03.jpg" alt="Card image cap">
-              <div class="card-body">
-              <h3 class="card-sub align-middle">Card Title</h3>
-              <p class="desc">Lorem ipsum dolor sit amet</p>
-                <small><p class="time-card">2 Days Ago</p></small>
-            </div>
-        
-          </div>
-        </a>
-    </div>
-  </div>
-<!-- <div class="card m-5" style="width: 300px;text-align:center">
-
-  <img src="https://assets.codepen.io/6093409/mountains-1.jpg" alt="a snow-capped mountain range"/>
-  <div class="card-body">
-    <h2 class="card-title">Mountains</h2>
-    <p class="card-text">This is a photo of snowy-covered mountains. How majestic.</p>
-    <a href="#" class="btn btn-secondary">Learn more</a>
-  </div>
-</div>
-<div class="card m-5" style="width: 300px;text-align:center">
-  <img src="https://assets.codepen.io/6093409/mountains-1.jpg" alt="a snow-capped mountain range">
-  <div class="card-body">
-    <h2 class="card-title">Mountains</h2>
-    <p class="card-text">This is a photo of snowy-covered mountains. How majestic.</p>
-    <a href="#" class="btn btn-secondary">Learn more</a>
-  </div>
-</div> -->
-	</div>
-
-
-
-
 
 </div>
 </body>		

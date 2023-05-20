@@ -1,9 +1,92 @@
-
 <?php include 'conn.php'; ?>
-<?php include 'headerA.html'; ?>
+<?php include 'headerA.html';
+session_start();
+if (!isset($_SESSION['customer_id'])) {
+    echo
+      "<script language=javascript>
+      alert('You haven't logged in yet !');
+      </script>
+      ";
+    header("Location: account.php");
+}
+else{
+  $c_id = $_SESSION['customer_id'];
+}
+
+$query= "SELECT * FROM customer where cust_id=".$c_id;
+if($conn->query($query) == TRUE) {
+	$result = $conn->query($query);
+	$row = $result->fetch_array(MYSQLI_ASSOC);
+	$name = $row['cust_name'];
+	$email = $row['cust_email'];
+	$phone = $row['cust_phone'];
+	$address = $row['cust_address'];
+	$city = $row['cust_city'];
+} 
+
+if(isset($_POST['updateacc'])) {
+	$uname = trim($_POST['uname']);
+	$uemail = trim($_POST['uemail']);
+	$unumber = trim($_POST['unumber']);
+	$ct = $_POST['ct'];
+	$uadr = trim($_POST['uadr']);
+	$upd = "UPDATE customer SET
+    cust_name = '$uname',
+    cust_phone = '$unumber',
+    cust_address = '$uadr',
+    cust_city = '$ct',
+    cust_email = '$uemail' 
+	WHERE cust_id=".$c_id;
+
+	if($conn->query($upd) == TRUE){
+		echo "<script>alert('Account Updated Successfully')</script>";
+	}
+	else{
+		echo "<script>alert('Error Updating Account')</script>";
+	}
+}
+if(isset($_POST['updatepass'])) {
+	$upass = trim($_POST['old']);
+	$npass = trim($_POST['new']);
+	$cpass = trim($_POST['new2']);
+
+	$res = mysqli_prepare($conn,"SELECT cust_pass FROM customer WHERE cust_id=".$c_id);
+	mysqli_stmt_execute($res);
+	mysqli_stmt_store_result($res);
+    if(mysqli_stmt_num_rows($res) == 1){
+		mysqli_stmt_bind_result($res,$hashed_password);
+		if(mysqli_stmt_fetch($res)){
+			if(password_verify($upass, $hashed_password)){
+				if($npass == $cpass){
+					$cpass = password_hash($npass, PASSWORD_DEFAULT);
+				if($conn->query("UPDATE customer SET cust_pass='$cpass' WHERE cust_id=".$c_id) == TRUE){
+					echo
+				"<script language=javascript>
+				alert('Password update success !!');
+				document.location.href = 'settings.php';
+				</script>
+				";
+				$_POST = array();
+				exit;
+				session_destroy();
+				}
+			}
+			else{
+				echo
+				"<script language=javascript>
+				alert('The password you entered was not valid');
+				document.location.href = 'settings.php';
+				</script>
+				";
+			}
+		}	
+	}
+}
+}
 
 
-<link rel="stylesheet" type="text/css" href="css/style2.css">
+
+?>
 <style>
 div#main{
 	padding: 40px;
@@ -29,88 +112,82 @@ div#main{
 						<h4 class="text-center">Account Name</h4>
 					</div>
 					<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-						<a class="nav-link active" id="account-tab" data-toggle="pill" href="#account" role="tab" aria-controls="account" aria-selected="true">
+						<a class="nav-link active" style="background-color:blanchedalmond;color: black;" id="account-tab" data-toggle="pill" href="#account" role="tab" aria-controls="account" aria-selected="true">
 							<i class="fa fa-home text-center mr-1"></i> 
 							Account
 						</a>
-						<a class="nav-link" id="password-tab" data-toggle="pill" href="#password" role="tab" aria-controls="password" aria-selected="false">
+						<a class="nav-link" id="password-tab" style="color: black;background-color: #f6dcb4;" data-toggle="pill" href="#password" role="tab" aria-controls="password" aria-selected="false">
 							<i class="fa fa-key text-center mr-1"></i> 
 							Password
-						</a>
-
-						<a class="nav-link" id="application-tab" data-toggle="pill" href="#application" role="tab" aria-controls="application" aria-selected="false">
-							<i class="fa fa-tv text-center mr-1"></i> 
-							Application
-						</a>
-						<a class="nav-link" id="notification-tab" data-toggle="pill" href="#notification" role="tab" aria-controls="notification" aria-selected="false">
-							<i class="fa fa-bell text-center mr-1"></i> 
-							Notification
 						</a>
 					</div>
 				</div>
 				<div class="tab-content p-3 p-md-5" id="v-pills-tabContent">
 					<div class="tab-pane fade show active" id="account" role="tabpanel" aria-labelledby="account-tab">
                         <form method="POST">
-                            <h3 class="mb-4">Account Settings</h3>
+                            <h3 class="mb-4">Account Data</h3>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Account Name</label>
-                                        <input type="text" class="form-control" value="">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Company Name (optional)</label>
-                                        <input type="text" class="form-control" value="">
+                                        <input name="uname" type="text" class="form-control" value=<?php echo $name; ?>>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Email</label>
-                                        <input type="text" class="form-control" value="">
+                                        <input name="uemail" type="email" class="form-control" value=<?php echo $email; ?>>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Phone number</label>
-                                        <input type="text" class="form-control" value="">
-                                    </div>
-                                </div>
-                                
-								<div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Address</label>
-                                        <input type="text" class="form-control" value="">
+                                        <input name="unumber" type="text" class="form-control" value=<?php echo $phone; ?>>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>City</label>
-                                        <input type="text" class="form-control" value="">
+										<select class="form-control" name="ct" 
+										onchange="if(this.options[this.selectedIndex].value=='customOption'){
+											toggleField(this,this.nextSibling);
+											this.selectedIndex='0';
+										}" required>
+										<option default value=<?php echo $city; ?>><?php echo $city; ?></option>
+										<?php 
+												$sql = mysqli_query($conn, "SELECT city_name FROM cities");
+												while ($row = $sql->fetch_assoc()){
+												echo "<option>" . $row['city_name'] . "</option>";
+												}
+												?>
+										</select>
+										<input name="ct" style="display:none;" disabled="disabled" 
+                						onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+								<div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Bio</label>
-                                        <textarea class="form-control" rows="4">Lorem ipsum dolor sit amet consectetur adipisicing elit.</textarea>
+                                        <label>Address Detail</label>
+										
+                                        <input name="uadr" type="text" class="form-control" style="height: 200px;" value="<?php echo $address;?>" required>
                                     </div>
                                 </div>
+                                
                             </div>
                             <div>
-                                <button class="btn btn-primary" name="updateacc">Update</button>
-                                <button class="btn btn-light" name="cancel">Cancel</button>
+                                <button class="btn btn-primary" style="font-weight: 500;" name="updateacc">Update</button>
                             </div>
                         </form>
 					</div>
                     
 					<div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
 						<h3 class="mb-4">Password Settings</h3>
+						<form method="post">
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Old password</label>
-								  	<input type="password" class="form-control">
+								  	<input name="old" type="password" class="form-control" required>
 								</div>
 							</div>
 						</div>
@@ -118,79 +195,21 @@ div#main{
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>New password</label>
-								  	<input type="password" class="form-control">
+								  	<input name="new" type="password" class="form-control" required>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Confirm new password</label>
-								  	<input type="password" class="form-control">
+								  	<input name="new2" type="password" class="form-control" required>
 								</div>
 							</div>
 						</div>
 						<div>
-							<button class="btn btn-primary">Update</button>
-							<button class="btn btn-light">Cancel</button>
-						</div>
-					</div>
-					
-					<div class="tab-pane fade" id="application" role="tabpanel" aria-labelledby="application-tab">
-						<h3 class="mb-4">Application Settings</h3>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" value="" id="app-check">
-										<label class="form-check-label" for="app-check">
-										App check
-										</label>
-									</div>
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" value="" id="defaultCheck2" >
-										<label class="form-check-label" for="defaultCheck2">
-										Lorem ipsum dolor sit.
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div>
-							<button class="btn btn-primary">Update</button>
-							<button class="btn btn-light">Cancel</button>
-						</div>
-					</div>
-
-					<div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
-						<h3 class="mb-4">Notification Settings</h3>
-						<div class="form-group">
-							<div class="form-check">
-								<input class="form-check-input" type="checkbox" value="" id="notification1">
-								<label class="form-check-label" for="notification1">
-									Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum accusantium accusamus, neque cupiditate quis
-								</label>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="form-check">
-								<input class="form-check-input" type="checkbox" value="" id="notification2" >
-								<label class="form-check-label" for="notification2">
-									hic nesciunt repellat perferendis voluptatum totam porro eligendi.
-								</label>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="form-check">
-								<input class="form-check-input" type="checkbox" value="" id="notification3" >
-								<label class="form-check-label" for="notification3">
-									commodi fugiat molestiae tempora corporis. Sed dignissimos suscipit
-								</label>
-							</div>
-						</div>
-						<div>
-							<button class="btn btn-primary">Update</button>
-							<button class="btn btn-light">Cancel</button>
-						</div>
-					</div>
+                            <button class="btn btn-primary" style="font-weight: 500;" name="updatepass">Update</button>
+                        </div>
+						</form>
+					</div>					
 				</div>
 			</div>
 		</div>

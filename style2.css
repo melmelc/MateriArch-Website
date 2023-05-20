@@ -35,3 +35,8 @@ body {
 	border-radius: 100%;
 	border: 5px solid #fff;
 }
+.nav-link.active,
+  .show > .nav-link {
+    color: black;
+    background-color: blanchedalmond;
+  }
