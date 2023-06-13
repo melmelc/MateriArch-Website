@@ -1,8 +1,9 @@
 @charset "UTF-8";
 
 header{
-    background-color: blanchedalmond;
-    padding-left:50px; padding-right: 50px;
+    background-color: #ffebcd;
+    padding-left:50px;
+    padding-right: 50px;
     padding-top: 20px;
 }
 #scrh{
@@ -20,7 +21,7 @@ header{
     display: none;
 }
 #navbar{
-    background-color: blanchedalmond;
+    background-color: #ffebcd;
   
 }
 #nav {
@@ -74,10 +75,4 @@ header{
     display: block;
     margin-left: 200px;
     margin-top: -35px;
-  }
-
-  div#main{
-    padding-left: 60px;
-      padding-right: 60px;
-      padding-top: 20px;
   }

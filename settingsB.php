@@ -1,6 +1,7 @@
 
 <?php include 'conn.php'; ?>
 <?php include 'headerB.html'; 
+session_start();
 if (!isset($_SESSION['company_id']))
 {   
     echo
@@ -13,81 +14,79 @@ if (!isset($_SESSION['company_id']))
 else{
   $c_id = $_SESSION['company_id'];
 }
+$query = "SELECT * FROM company WHERE comp_id = $c_id";
+$result = $conn->query($query);
 
-$query= "SELECT * FROM company where comp_id=".$c_id;
-if($conn->query($query) == TRUE) {
-	$result = $conn->query($query);
-	$row = $result->fetch_array(MYSQLI_ASSOC);
-	$name = $row['comp_name'];
-	$email = $row['comp_email'];
-	$phone = $row['comp_phone'];
-	$address = $row['comp_address'];
-	$city = $row['comp_city'];
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $name = $row['comp_name'];
+    $email = $row['comp_email'];
+    $phone = $row['comp_phone'];
+    $address = $row['comp_address'];
+    $city = $row['comp_city'];
 } 
 
-if(isset($_POST['updateacc'])) {
-	$uname = trim($_POST['uname']);
-	$uemail = trim($_POST['uemail']);
-	$unumber = trim($_POST['unumber']);
-	$ct = $_POST['ct'];
-	$uadr = trim($_POST['uadr']);
-	$upd = "UPDATE company SET
-    comp_name = '$uname',
-    comp_phone = '$unumber',
-    comp_address = '$uadr',
-    comp_city = '$ct',
-    comp_email = '$uemail' 
-	WHERE comp_id=".$c_id;
-
-	if($conn->query($upd) == TRUE){
-		echo "<script>alert('Account Updated Successfully')</script>";
-	}
-	else{
-		echo "<script>alert('Error Updating Account')</script>";
-	}
-}
-if(isset($_POST['updatepass'])) {
-	$upass = trim($_POST['old']);
-	$npass = trim($_POST['new']);
-	$cpass = trim($_POST['new2']);
-
-	$res = mysqli_prepare($conn,"SELECT comp_password FROM company WHERE comp_id=".$c_id);
-	mysqli_stmt_execute($res);
-	mysqli_stmt_store_result($res);
-    if(mysqli_stmt_num_rows($res) == 1){
-		mysqli_stmt_bind_result($res,$hashed_password);
-		if(mysqli_stmt_fetch($res)){
-			if(password_verify($upass, $hashed_password)){
-				if($npass == $cpass){
-					$cpass = password_hash($npass, PASSWORD_DEFAULT);
-				if($conn->query("UPDATE company SET comp_password='$cpass' WHERE comp_id=".$c_id) == TRUE){
-					echo
-				"<script language=javascript>
-				alert('Password update success !!');
-				document.location.href = 'settingsB.php';
-				</script>
-				";
-				$_POST = array();
-				exit;
-				session_destroy();
-				}
-			}
-			else{
-				echo
-				"<script language=javascript>
-				alert('The password you entered was not valid');
-				document.location.href = 'settingsB.php';
-				</script>
-				";
-			}
-		}	
-	}
-}
+if (isset($_POST['updateacc'])) {
+    $uname = trim($_POST['uname']);
+    $uemail = trim($_POST['uemail']);
+    $unumber = trim($_POST['unumber']);
+    $ct = $_POST['ct'];
+    $uadr = trim($_POST['uadr']);
+    
+    $stmt = $conn->prepare("UPDATE company SET comp_name = ?, comp_phone = ?, comp_address = ?, comp_city = ?, comp_email = ? WHERE comp_id = ?");
+    $stmt->bind_param("sssssi", $uname, $unumber, $uadr, $ct, $uemail, $c_id);
+    
+    if ($stmt->execute()) {
+        echo "<script>alert('Account Updated Successfully');
+		document.location.href = 'settingsB.php';</script>";
+    } else {
+        echo "<script>alert('Error Updating Account');
+		document.location.href = 'settingsB.php';</script>";
+    }
+    
+    $stmt->close();
 }
 
+if (isset($_POST['updatepass'])) {
+    $upass = trim($_POST['old']);
+    $npass = trim($_POST['new']);
+    $cpass = trim($_POST['new2']);
+    
+    $stmt = $conn->prepare("SELECT comp_password FROM company WHERE comp_id = ?");
+    $stmt->bind_param("i", $c_id);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows == 1) {
+        $stmt->bind_result($hashed_password);
+        $stmt->fetch();
+        
+        if (password_verify($upass, $hashed_password)) {
+            if ($npass == $cpass) {
+                $new_password = password_hash($npass, PASSWORD_DEFAULT);
+                $stmt = $conn->prepare("UPDATE company SET comp_password = ? WHERE comp_id = ?");
+                $stmt->bind_param("si", $new_password, $c_id);
+                
+                if ($stmt->execute()) {
+                    echo "<script>alert('Password Updated Successfully')</script>";
+                    session_destroy();
+                    exit;
+                } else {
+                    echo "<script>alert('Error Updating Password')</script>";
+                }
+            } else {
+                echo "<script language='javascript'>
+                    alert('The password you entered was not valid');
+                    document.location.href = 'settingsB.php';
+                </script>";
+            }
+        }
+    }
+    
+    $stmt->close();
+}
 
-
-
+$_POST = array();
 ?>
 <style>
 div#main{
@@ -99,7 +98,7 @@ div#main{
     margin-left: 60px;
 }
 </style>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <body>
     <div id=main>
 	<section>
@@ -109,7 +108,10 @@ div#main{
 				<div class="profile-tab-nav border-right">
 					<div class="p-4">
 						<div class="img-circle text-center mb-3">
-							<img src="https://clipground.com/images/account-logo-png-11.png" alt="Image" class="shadow" style="width:150px">
+						<img style="width:180px;clip-path:circle()" src=<?php if($row['picture'] != NULL) {
+										echo ("'assets/".$row['picture']."'");
+									}
+									else{ echo("https://clipground.com/images/account-logo-png-11.png"); } ?> alt="Image" class="shadow">
 						</div>
 						<h4 class="text-center">Account Name</h4>
 					</div>
@@ -126,13 +128,16 @@ div#main{
 				</div>
 				<div class="tab-content p-3 p-md-5" id="v-pills-tabContent">
 					<div class="tab-pane fade show active" id="account" role="tabpanel" aria-labelledby="account-tab">
-                        <form method="POST">
+                        <form method="POST" action="settingsB.php" enctype="multipart/form-data">
                             <h3 class="mb-4">Account Data</h3>
+							<div>
+							<label><b>Upload Profile Picture (Optional) :</b></label>&nbsp;&nbsp;<input type='file' name='pic'>
+							</div>
                             <div class="row">
-                                <div class="col-md-6">
+							<div class="col-md-6">
                                     <div class="form-group">
                                         <label>Account Name</label>
-                                        <input name="uname" type="text" class="form-control" value=<?php echo $name; ?>>
+                                        <input name="uname" type="text" class="form-control" value='<?php echo $name; ?>'>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -147,30 +152,34 @@ div#main{
                                         <input name="unumber" type="text" class="form-control" value=<?php echo $phone; ?>>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                
+								<div class="col-md-6" style="display:flex; justify-content:space-between">
                                     <div class="form-group">
-                                        <label>City</label>
-										<select class="form-control" name="ct" 
-										onchange="if(this.options[this.selectedIndex].value=='customOption'){
-											toggleField(this,this.nextSibling);
-											this.selectedIndex='0';
-										}" required>
-										<option default value=<?php echo $city; ?>><?php echo $city; ?></option>
+										<label>Provinsi :</label>
+										<h6><select id="state" class="form-control" required>
+										<option value="" default>--Select State--</option>
 										<?php 
-												$sql = mysqli_query($conn, "SELECT city_name FROM cities");
-												while ($row = $sql->fetch_assoc()){
-												echo "<option>" . $row['city_name'] . "</option>";
-												}
-												?>
-										</select>
-										<input name="ct" style="display:none;" disabled="disabled" 
-                						onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
-                                    </div>
+												$sql = mysqli_query($conn, "SELECT * FROM provinsi");
+													while ($row = $sql->fetch_assoc()){
+													?>
+												<option value="<?php echo $row['prov_id'] ?>">
+													<?php echo $row['prov_name'] ?>
+												</option>   
+											<?php   }  ?>
+										</select></h6>
+										</div>
+									<div class="form-group">
+										<label>Kota :</label>
+										<h6><select id="city" name="ct" class="form-control" required>
+										<option value="" default><?php echo $city; ?></option>
+										</select></h6>
+									</div>
                                 </div>
+
 								<div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Address Detail</label>
-                                        <input name="uadr" type="text" class="form-control" style="height: 200px;" value=<?php echo $address; ?> required>
+                                        <label>Address Detail</label>		
+                                        <input name="uadr" type="text" class="form-control" style="height: 200px;" value="<?php echo $address;?>" required>
                                     </div>
                                 </div>
                                 
@@ -216,6 +225,34 @@ div#main{
 		</div>
 	</section>
 	</div>
+	<script>
+						$(document).ready(function() {
+						// When the state selection changes
+
+						$('#state').change(function() {
+							var stateId = $(this).val(); // Get the selected state ID
+							
+							// Clear the city selection
+							$('#city').empty().html('');
+							
+							// Make an AJAX request to get cities based on the selected state
+							$.ajax({
+							url: 'ajax_getcity.php', // The PHP file to handle the request
+							method: 'POST',
+							data: { stateId: stateId }, // Send the selected state ID
+							success: function(response) {
+								// Populate the city selection with the received cities
+							$('#city').html(response);
+						},
+						error: function(xhr, status, error) {
+							console.error(error);
+							// Handle any error that occurred during the AJAX request
+						}
+				});
+			});
+			});
+
+	</script>
 </body>
 <?php include 'footer2.html'; ?>
 </html>

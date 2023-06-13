@@ -11,17 +11,15 @@ if(isset($_POST['role']) and isset($_POST['password']) and isset($_POST['email']
     $user_role = $_POST['role'];
     if($user_role == "Buyer") {
         if($_SERVER["REQUEST_METHOD"] == "POST"){
-            if(empty(trim($_POST["email"]))){
-                $user_email_err = "Please enter your email";
-            } else {
-                $user_email = trim($_POST["email"]);
-            }
+            
+            $user_email = trim($_POST["email"]);
+            $user_password = trim($_POST["password"]);
         }
     
         if(empty(trim($_POST["password"]))){
             $user_password_err = "Please enter your password";
         } else {
-            $user_password = trim($_POST["password"]);
+            
         }
     
         if(empty($user_email_err) && empty($user_password_err)){
@@ -44,19 +42,32 @@ if(isset($_POST['role']) and isset($_POST['password']) and isset($_POST['email']
                                 $_SESSION["customer_id"] = $customer_id;
                                 $_SESSION["email"] = $user_email;
     
-                                header("location: loginHome.php");
+                                header("Location: loginHome.php");
     
                             }else {
-                                $user_password_err = "The password you entered was not valid";
-                                echo($user_password_err);
+                                echo
+                                "<script language=javascript>
+                                alert('The password you entered was not valid !');
+                                document.location.href = 'account.php';
+                                </script>
+                                ";
                             }
                         }
                     } else {
-                        $user_email_err = "No email found";
-                        echo($user_email_err);
+                        echo
+                        "<script language=javascript>
+                        alert('No email found !');
+                        document.location.href = 'account.php';
+                        </script>
+                        ";
                     }
                 } else {
-                    echo "Having trouble.";
+                    echo
+                    "<script language=javascript>
+                    alert('Having trouble !');
+                    document.location.href = 'account.php';
+                    </script>
+                    ";
                 }
     
                 mysqli_stmt_close($stmt);
@@ -101,24 +112,108 @@ if(isset($_POST['role']) and isset($_POST['password']) and isset($_POST['email']
                                 $_SESSION["company_id"] = $company_id;
                                 $_SESSION["email"] = $company_email;
     
-                                header("location: loginHomeB.php");
+                                header("Location: loginHomeB.php");
     
                             }else {
-                                $company_password_err = "The password you entere was not valid";
-                                echo($company_password_err);
+                                echo
+                                "<script language=javascript>
+                                alert('The password you entered was not valid !');
+                                document.location.href = 'account.php';
+                                </script>
+                                ";
                             }
                         }
                     } else {
-                        $company_email_err = "No email found";
-                        echo($company_email_err);
+                        echo
+                        "<script language=javascript>
+                        alert('No email found !');
+                        document.location.href = 'account.php';
+                        </script>
+                        ";
                     }
                 } else {
-                    echo "Having trouble.";
+                    echo
+                    "<script language=javascript>
+                    alert('Having trouble !');
+                    document.location.href = 'account.php';
+                    </script>
+                    ";
                 }
     
                 mysqli_stmt_close($stmt);
             }
         }
+        
+    
+        mysqli_close($conn);
+    }
+    else if($user_role == "Driver") {
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+            if(empty(trim($_POST["email"]))){
+                $driver_email_err = "Please enter your email";
+            } else {
+                $driver_email = trim($_POST["email"]);
+            }
+        }
+    
+        if(empty(trim($_POST["password"]))){
+            $driver_password_err = "Please enter your password";
+        } else {
+            $driver_password = trim($_POST["password"]);
+        }
+    
+        if(empty($driver_email_err) && empty($driver_password_err)){
+            $sql = "SELECT driver_id, d_email, d_pass FROM driver WHERE d_email = ?";
+    
+            if($stmt = mysqli_prepare($conn, $sql)){
+                mysqli_stmt_bind_param($stmt, "s", $param_company_email);
+    
+                $param_driver_email = $driver_email;
+    
+                if(mysqli_stmt_execute($stmt)){
+                    mysqli_stmt_store_result($stmt);
+                    if(mysqli_stmt_num_rows($stmt) == 1){
+                        mysqli_stmt_bind_result($stmt, $driver_id, $driver_email, $hashed_password);
+                        if(mysqli_stmt_fetch($stmt)){
+                            if(password_verify($driver_password, $hashed_password)){
+                                session_start();
+    
+                                $_SESSION["loggedin"] == true;
+                                $_SESSION["driver_id"] = $driver_id;
+                                $_SESSION["email"] = $driver_email;
+    
+                                header("Location: loginD.php");
+    
+                            }else {
+                                echo
+                                "<script language=javascript>
+                                alert('The password you entered was not valid !');
+                                document.location.href = 'account.php';
+                                </script>
+                                ";
+                            }
+                        }
+                    } else {
+                        echo
+                        "<script language=javascript>
+                        alert('No email found !');
+                        document.location.href = 'account.php';
+                        </script>
+                        ";
+                    }
+                } else {
+                    echo
+                    "<script language=javascript>
+                    alert('Having trouble !');
+                    document.location.href = 'account.php';
+                    </script>
+                    ";
+                }
+    
+                mysqli_stmt_close($stmt);
+            }
+        }
+        
     
         mysqli_close($conn);
     }
@@ -142,13 +237,14 @@ div#main{
     <div id="main" style="text-align:center">
     <h3>Login To Your Account</h3>
     <hr>       
-            <form method="POST" >
+            <form method="POST">
                 <h6>Login As :</h6>
                 <h6>
                     <select name="role"  class="form-control"  required>
-                        <option default></option>
+                    <option default value="">Select Role</option>
                         <option value="Buyer">Buyer</option>
                         <option value="Craftman">Craftman</option>
+                        <option value="Driver">Driver</option>
                     </select>
                 </h6>
                 <h6><label for="email">Email :</label></h6>

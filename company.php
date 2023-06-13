@@ -11,17 +11,17 @@ if (!isset($_SESSION['customer_id']))
     header("Location: account.php");
 }
 else{
-  $c_id = $_SESSION['customer_id'];
-  $tender_id = $_GET['tender'];
+  
 }
-
+$c_id = $_SESSION['customer_id'];
+  $tender_id = $_GET['tender'];
 
 
 
 ?>
 <body>
     <div id="main" style="padding: 40px">
-    <div id="detail" style="display: inline-flex;justify-content: space-evenly;">
+    <div id="detail" style="display: inline-flex;">
         <?php 
         $select = "SELECT * FROM tender t JOIN request_order ro ON t.ro_id = ro.ro_id JOIN company c ON c.comp_id = t.comp_id WHERE t.tender_id=".$tender_id;
         if($conn->query($select) == TRUE) {
@@ -32,19 +32,24 @@ else{
                     $ph = $row['comp_phone'];
                     echo "<img style='width:30%' src='assets/".$row['ro_design']."' >
                     <div id='content' style='padding-left: 30px'>
-            
-            <h3>".$row['comp_name']."</h3>
-            <h3> Price offered by this company : ".$row['offered_price']."</h3>
-            <h4> Company Address : ".$row['comp_address']."</h4>
-            <h4> Company Phone : <a href='https://wa.me/".$ph."'>".$ph."</a></h4>
+                    <h5> Date offered : ".$row['offer_date']." </h5>
+            <h5> Price offered by this company : Rp ".number_format($row['offered_price'],0,',','.')."</h5>
+            <h5> Company Phone : <a href='https://wa.me/".$ph."'>".$ph."</a></h5>
+            <h5> Company Address : ".$row['comp_address']."</h5>
+            <h5> Company City : ".$row['comp_city']."</h5>
             <br>
-            <h6>REQUEST DESCRIPTION</h6>
-            <p>".$row['ro_desc']."</p>
-            <a href='payment.php?tender=".urlencode($tender)."'><button class='btn btn-primary'>Approve this offer</button></a>
+            <h6>Offer Description</h6>
+            <p>".$row['offer_desc']."</p>
+            <br>";
+            if($row['status'] == "Awaiting Payment"){echo"<button class='btn btn-primary' disabled>Approve this offer</button>"; }
+            else{ echo"
+            <a href='payment.php?tender=".urlencode($tender)."'><button class='btn btn-primary'>Approve this offer</button></a>";}
+            echo"
             </div>   ";
                 }
             }
         }
+    
         
         ?>
             
@@ -52,23 +57,30 @@ else{
     <div>
         <br><br>
         <h3>Company Profile</h3>
-        <br>            
-        <h3> Company Name </h3>
-        <hr>
         <div style="display: inline-flex;justify-content: space-evenly;">
-        <img src="assets/ERD Manpro 8.jpg" style="width:40%">
+        <img src="assets/agra.jpeg" style="width:40%">
         <div id="content" style="padding-left: 30px">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates, tenetur nostrum! Repudiandae, modi aspernatur. Atque, dolore maiores suscipit ipsam saepe nihil officiis. Soluta qui earum quae. Beatae dignissimos impedit odit.</p>
-        <h3>Contact Us</h3>
-        <p>Address : </p>
-        <p>Email : </p>
-        <p>Phone Number :</p>
-        <a href="portfolio.php"><button type="primary">See our portfolios</button></a>
+        <?php 
+        $qu = "SELECT * FROM tender t JOIN company c ON t.comp_id = c.comp_id WHERE t.tender_id=".$tender_id;
+        if($conn->query($qu) == TRUE) {
+            $result = $conn->query($qu);
+            $row = $result->fetch_assoc();
+            echo "<h3>".$row['comp_name']."</h3>
+            <hr>
+            <p>".$row['comp_profile']."</p>
+            <h3>Contact Us </h3>
+            <b><p>Address : ".$row['comp_address'].", ".$row['comp_city']."</p>
+            <p>Email : <a href='mailto:".$row['comp_email']."'>".$row['comp_email']."</a></p>
+            <p>Phone Number : <a href='https://wa.me/".$row['comp_phone']."'>".$row['comp_phone']."</a></p></b>
+            <a href='portfolio.php?compid=".urlencode($row['comp_id'])."'><button class='btn btn-primary'>See our portfolios</button></a>";
+        }
+        ?>
+        
         </div>
         </div>
+        <br>
+        <br>
     </div>
-            
-    
     </div>
 </body>
 

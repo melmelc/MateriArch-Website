@@ -47,49 +47,89 @@ div#main{
 }
 
 .card .card-body:first-of-type{
-	/* border:1px solid #96cecf;
-	border-top:1px solid #96cecf;;  */
+	border:1px solid #96cecf;
+	border-top:1px solid #96cecf;; 
 }
+p {
+  white-space: nowrap; 
+  width: 70%s; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+.card{
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+      transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+  cursor: pointer;
+}
+
+.card:hover{
+     transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+.card h6{
+  font-weight: 600;
+}
+
+@media(max-width: 990px){
+  .card{
+    margin: 20px;
+  }
+} 
 </style>
 <body>
-<div id="main" style="display:flex">
-<?php 
-  $arr = array();
-  while(true) {
-  $id = random_int(1,5);
-  if(!in_array($id,$arr)) {
-    array_push($arr,$id);
-  }
-  if(sizeof($arr) == 4) {
-    break;
-  }
-}
-  
-  foreach($arr as $i) {
-  $query = "SELECT * from category WHERE category_id=".$i;
-  if($conn->query($query) == TRUE) {
-    $result = $conn->query($query);
-    $row = $result->fetch_assoc();
-    $category = $row['category_name'];
-    $image = $row['cat_pic'];
-    echo "<div class='container'>
-          <div class='card-deck'>
-            <a href='request.php?category=".urlencode($category)."'>
-                <div class='card'>
-                  <img style='border:3px solid chocolate; border-radius: 50%; width: 200px;height: 200px;object-fit: cover; margin-left:10px' src='assets/".$image."'>
-                    <div class='card-body'>
-                    <h3 class='card-sub align-middle'>" .$category. "</h3>
-                    <p class='desc'>Lorem ipsum dolor sit amet</p>
-                      <small><p class='time-card'>2 Days Ago</p></small>
-                  </div>
-              
-                </div>
-              </a>
-          </div>
-          </div>";
+<div id="main" style='text-align:center'>
+<h3>Recently Posted Requests</h3>
+    <div style="display:flex;overflow-x:auto;scroll-behavior:smooth">
+    
+      <?php
+        $query = "SELECT * FROM request_order WHERE cust_id=".$c_id." ORDER BY ro_date ASC";
+            if($conn->query($query) == TRUE) {
+                $result = $conn->query($query);
+                $count = $result->num_rows;
+                if($count > 0) {
+                    while($row = $result->fetch_assoc()) {
+                    $title = $row['ro_title'];
+                $category = $row['ro_category'];
+                $image = $row['ro_design'];
+                $desc = $row['ro_desc'];
+                $date = $row['ro_date'];
+                echo "<div class='container' style='padding-right: 15px;padding-left: 15px;'>
+                        <div class='card-deck'>
+                        <a href='request-detail.php?tender=".urlencode($title)."'>
+                            <div class='card'>
+                            <img style='border:3px solid chocolate;width: 250px;height: 180px;object-fit: cover;margin-left: 0px;' src='assets/".$image."'>
+                                <div class='card-body'>
+                                <h6 class='card-sub align-middle' id='title'>" .$title. "</h6>        
+                                <p class='desc' style='color:black;text-overflow: ellipsis;' >".$desc."</p>
+                                    <small><p class='time-card' style='color:red'>Request End Date : ".$date."</p></small>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        </div>";
+                }
             }
-          }
-    ?>
+                else{
+                    echo "<h4><b style='color:red'>NO REQUEST FOUND !</b></h4>";
+                    echo " <br>
+                    <br><br><br>";
+                   
+                    // echo
+                    // "<script language=javascript>
+                    // alert('NO REQUEST FOUND !');
+                    // document.location.href = 'tender.php';
+                    // </script>
+                    // ";
+                    // $_POST=array();
+                }
+                
+            }
+            $_POST=array();
+        ?>
+    </div>
 </div>
 </body>		
 <?php include 'footer2.html'; ?>

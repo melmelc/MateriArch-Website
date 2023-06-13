@@ -1,5 +1,5 @@
 <?php
-if (!isset($_SESSION['company_id']) OR !isset($_SESSION['customer_id']))
+if (!isset($_SESSION['company_id']) AND !isset($_SESSION['customer_id']))
 {   
 	include 'header.html';
     echo
@@ -62,7 +62,7 @@ div#main{
 							<p><input style="width : 90%" type="text" name="name" placeholder="Name *"></p>
 							<p><input style="width : 90%" type="text" name="email" placeholder="E-mail Address *"></p>
 							<p><textarea  style="width : 90%"name="comment" rows="3" placeholder="Message *"></textarea></p>
-							<button type="submit" id="submit" class="clearfix btn" value="Send">Send</button>
+							<button type="submit" id="submit" class="btn btn-success btn-block" style="width: 90%;" value="Send">Send</button>
 						</div>
 					</form>
 					<div class="done"style="display:none;">								

@@ -29,53 +29,54 @@ div#main{
 }
 
 .card{
-	border:none;
-	flex: 0 0 auto;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+      transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+  cursor: pointer;
 }
 
-.card .card-body:first-of-type{
-	/* border:1px solid #96cecf;
-	border-top:1px solid #96cecf;;  */
+.card:hover{
+     transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+.card h6{
+  font-weight: 600;
+}
+
+@media(max-width: 990px){
+  .card{
+    margin: 20px;
+  }
+} 
+p {
+  white-space:break-spaces;
+  word-wrap: break-word;
 }
 
 </style>
 <body>
 <div id="up" style="display: block;text-align:center;padding-top:30px;">
-<h3>Trending Material</h3>
+<h3>Materials Category</h3>
 </div>
-<div id="main" style="display:flex">
+<div id="main" style="display:flex;overflow:scroll;scroll-behavior:smooth">
 <?php 
-  $x = 0;
-  $bool = true;
-  $arr = array();
-  while(true) {
-  $id = random_int(1,5);
-  if(!in_array($id,$arr)) {
-    array_push($arr,$id);
-  }
-  if(sizeof($arr) == 3) {
-    break;
-  }
-  
-  
-  }
-
-  foreach($arr as $i) {
-  $query = "SELECT * from category WHERE category_id=".$i;
+  $query = "SELECT * from category ORDER BY category_name ASC";
   if($conn->query($query) == TRUE) {
     $result = $conn->query($query);
-    $row = $result->fetch_assoc();
+    while($row = $result->fetch_assoc()) {
+    
     $category = $row['category_name'];
     $image = $row['cat_pic'];
     echo "<div class='container'>
 <div class='card-deck'>
-  <a href='http://google.com'>
+  <a href='tender.php' style='color:black'>
       <div class='card'>
-        <img style='border:3px solid chocolate; border-radius: 50%; width: 200px;height: 200px;object-fit: cover; margin-left:10px' src='assets/".$image."'>
+        <img style='border:3px solid chocolate; width: 250px;height: 180px;object-fit: cover;' src='assets/".$image."'>
           <div class='card-body'>
           <h3 class='card-sub align-middle'>" .$category. "</h3>
-          <p class='desc'>Lorem ipsum dolor sit amet</p>
-            <small><p class='time-card'>2 Days Ago</p></small>
+          <p class='desc'>".$row['cat_desc']."</p>
         </div>
     
       </div>

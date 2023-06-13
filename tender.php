@@ -78,131 +78,166 @@ div#main{
 	padding-top:12rem;
 }
 
-.card{
-	border:none;
-	flex: 0 0 auto;
-}
 
 .card .card-body:first-of-type{
-	/* border:1px solid #96cecf;
-	border-top:1px solid #96cecf;;  */
+	border:1px solid #96cecf;
+	border-top:1px solid #96cecf;; 
+}
+p {
+  white-space: nowrap; 
+  width: 70%s; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+.card{
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+      transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+  cursor: pointer;
 }
 
+.card:hover{
+     transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+.card h6{
+  font-weight: 600;
+}
+
+@media(max-width: 990px){
+  .card{
+    margin: 20px;
+  }
+} 
 </style>
 <body>
     <div id="main">
-        <div>
-            <h3>Add new request</h3>
-            <form action="#" method="POST" enctype="multipart/form-data">
-                <label for="date"><h6>Request Deadline :</h6></label>
-                <input type="date" id="date" name="date" placeholder="DD-MM-YYYY" required>
-                <small><p>Fill the date where the material needs to be fully received</p></small>
-                <label for="title"><h6>Request Title :</h6></label>
-                <input type="text" id="title" name="title" required><br>
-                <label for="qty"><h6>Request Quantity :</h6></label>
-                <input type="number" id="qty" name="qty" min="100" max="10000" required><br>
-                <label for="qty"><h6>Material Category :</h6></label>
-                <select id="category" name="category" required>
-                    <option default></option>
-                    <?php
-                     $sql = "SELECT category_name FROM category";
-                     $result=$conn->query($sql);
-                     if($result->num_rows>0){
-                         while($row=$result->fetch_assoc()){
-                             echo "<option>".$row['category_name']."</option>";
-                         }
-                     }
-                    ?>
-                </select>
-                <br>
-                <label for="title"><h6>Select design files :</h6></label>
-                <input type="file" id="myfile" name="myfile" accept="image/*,.pdf" required>
-                <p style="color:red"><small>(Please include the size dimension in the submitted file.)</small></p>
-                
-                <label for="desc">Describe your request in the field below as clear as possible</label>
-                <input type="text" name="desc" style="width: 800px;height:100px; display:flex;text-align:center" placeholder="Describe your request here" required>
-                <input type="checkbox" id="agreement" name="agreement" >
-                <label for="agreement">Allow my design to be used by others for commercial purposes</label><br>
-                <p style="color:red"><small>(By filling this checkbox, I allow my design to be used by others)</small></p>
-                <button type="submit" name="sub">Submit</button>
-            </form>
+    <div style="display:flex;justify-content: space-between;">
+                <h3>Requests you have posted</h3>
+            <div style="width:30%">
+                <form method='post'>
+                    <label for="filter"><b>Filter : </b></label>
+                    <select name="filter" class="form-control" style="width:60%;display:inline-flex;">
+                    <option value="All">All</option>
+                        <?php 
+                                $sql = mysqli_query($conn, "SELECT * FROM category");
+                                while ($row = $sql->fetch_assoc()){
+                                echo "<option>" . $row['category_name'] . "</option>";
+                                }
+                            ?>
+                        </select>
+                        <input name="filter" style="display:none;" disabled="disabled" 
+                        onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
+                        <button class="btn btn-success" name="sub">Search</button>
+                </form>
+            </div>
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <div style="display: flex;">
-            <h3>Requests you have posted</h3>
-            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-            <form method='post'>
-            <label for="filter">Filter :</label>
-            <select name="filter" 
-            onchange="if(this.options[this.selectedIndex].value=='customOption'){
-                toggleField(this,this.nextSibling);
-                this.selectedIndex='0';
-            }" required> <h4>
-            
-            <option value="All">All</option>
-            <?php 
-                    $sql = mysqli_query($conn, "SELECT * FROM category");
-                    while ($row = $sql->fetch_assoc()){
-                    echo "<option>" . $row['category_name'] . "</option>";
-                    }
-                    ?>
-             </h4></select>
-            <input name="filter" style="display:none;" disabled="disabled" 
-                onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
-            <button type="submit" name="sub">Search</button>
-            </form>
-            
-        </div>
+        <hr>
         
-        <div style="display:flex;overflow-x:auto;scroll-behavior:smooth">
+        <div style="display:flex;overflow-x:scroll;scroll-behavior:smooth">
         <?php
-            if(isset($ctg)) {
-                $query = "SELECT * FROM request_order WHERE cust_id=".$c_id." AND ro_category='".$ctg."'";
-                
-            }
-            else {
-                $query = "SELECT * FROM request_order WHERE cust_id=".$c_id;
-            }
-            
+        $query = "SELECT * FROM request_order WHERE cust_id=".$c_id." ORDER BY ro_date ASC";
             if(isset($_POST['sub'])) {
                 $temp = $_POST['filter'];
-                $query = "SELECT * FROM request_order WHERE cust_id=".$c_id." AND ro_category='".$temp."'";
+                if($temp != "All") {
+                $query = "SELECT * FROM request_order WHERE cust_id=".$c_id." AND ro_category='".$temp."' ORDER BY ro_date ASC";
+            }
+            }
+            else{
+                $query = "SELECT * FROM request_order WHERE cust_id=".$c_id." ORDER BY ro_date ASC";
             }
             if($conn->query($query) == TRUE) {
                 $result = $conn->query($query);
-                $row = $result->fetch_array();
                 $count = $result->num_rows;
                 if($count > 0) {
+                    while($row = $result->fetch_assoc()) {
                     $title = $row['ro_title'];
                 $category = $row['ro_category'];
                 $image = $row['ro_design'];
-                echo "<div class='container'>
+                $desc = $row['ro_desc'];
+                $date = $row['ro_date'];
+                echo "<div class='container' style='padding-right: 15px;padding-left: 15px;'>
                         <div class='card-deck'>
-                        <a href='tender-detail.php?tender=".urlencode($title)."'>
+                        <a href='request-detail.php?tender=".urlencode($title)."'>
                             <div class='card'>
-                            <img style='border:3px solid chocolate; border-radius: 50%; width: 180px;height: 180px;object-fit: cover; margin-left:32px' src='assets/".$image."'>
+                            <img style='border:3px solid chocolate;width: 100%;height: 180px;object-fit: cover;margin-left: 0px;' src='assets/".$image."'>
                                 <div class='card-body'>
-                                <h3 class='card-sub align-middle' id='title'>" .$title. "</h3>
-                                <h3 class='card-sub align-middle'>" .$category. "</h3>
-                                
-                                <p class='desc'>Lorem ipsum dolor sit amet</p>
-                                    <small><p class='time-card'>2 Days Ago</p></small>
+                                <h6 class='card-sub align-middle' id='title'>" .$title. "</h6>        
+                                <p class='desc' style='color:black;text-overflow: ellipsis;' >".$desc."</p>
+                                    <small><p class='time-card' style='color:red'>Request End Date : ".$date."</p></small>
                                 </div>
-                            
                             </div>
                             </a>
                         </div>
                         </div>";
                 }
+            }
                 else{
-                    echo "NO DATA FOUND";
+                    echo "<h4><b style='color:red'>NO REQUEST FOUND !</b></h4>";
+                    echo " <br>
+                    <br><br><br>";
+                   
+                    // echo
+                    // "<script language=javascript>
+                    // alert('NO REQUEST FOUND !');
+                    // document.location.href = 'tender.php';
+                    // </script>
+                    // ";
+                    // $_POST=array();
                 }
                 
             }
+            $_POST=array();
         ?>
+        </div>
+        <br><br>
+        
+        <h3>Add New Request</h3>
+        <div>
+            <form action="#" method="POST" enctype="multipart/form-data" class='form-control'>
+                <label for="title"><h6>Request Title :</h6></label>
+                <input type="text" id="title" class="form-control" name="title" required><br>
+                    <div style="display:flex;justify-content:space-between" >
+                        <div>
+                            <label for="qty"><h6>Material Category :</h6></label>
+                            <select id="category" style="width:100%" class="form-control" name="category" required>
+                                <option default></option>
+                                <?php
+                                $sql = "SELECT category_name FROM category";
+                                $result=$conn->query($sql);
+                                if($result->num_rows>0){
+                                    while($row=$result->fetch_assoc()){
+                                        echo "<option>".$row['category_name']."</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="qty"><h6>Request Quantity :</h6></label>
+                            <input type="number" id="qty" class="form-control" style="width:100%" name="qty" min="5" max="10000" required><br>
+                        </div>
+                        <div class="mb-3">
+                            <label for="myfile"><h6>Select design files :</h6></label>
+                            <input class="form-control" style="width:100%" type="file" id="myfile" name="myfile" accept="image/*">
+                            <small style="color:red;">(Please include the size dimension in the submitted file.)</small>
+                        </div>
+                        <div>
+                            <label for="date"><h6>Request Deadline :</h6></label>
+                            <input type="date" id="date" name="date" class="form-control" required>
+                            <small><p>Choose End Date for the request</p></small>
+                        </div>
+                    </div>
+                <label for="desc"><h6>Describe your request in the field below as clear as possible</h6></label>
+                <input type="text" name="desc" class="form-control" style="height:100px; display:flex;text-align:center" placeholder="Describe your request here" required>
+                <br>
+                <input type="checkbox" id="agreement" name="agreement" >
+                <label for="agreement">Allow my design to be used by others for commercial purposes</label><br>
+                <p style="color:red"><small>(By filling this checkbox, I allow my design to be used by others)</small></p>
+                <button class="btn btn-primary" style="width:100%" name="sub">Submit</button>
+            </form>
         </div>
     </div>
 </body>

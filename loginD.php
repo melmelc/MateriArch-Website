@@ -1,7 +1,7 @@
 <?php include 'headerB.html';
 include 'conn.php';
 session_start();
-if (!isset($_SESSION['company_id']))
+if (!isset($_SESSION['driver_id']))
 {   
     echo
     "<script language=javascript>
@@ -11,7 +11,7 @@ if (!isset($_SESSION['company_id']))
     header("Location: account.php");
 }
 else{
-  $c_id = $_SESSION['company_id'];
+  $d_id = $_SESSION['driver_id'];
 }
 ?> 
 
@@ -82,7 +82,7 @@ p {
 </style>
 <body>
 <div id="main">
-<h3 style='text-align:center'>Recently Added Requests</h3>
+<h3 style='text-align:center'>PickUp Request</h3>
 <br>
 	<div style="display:flex;overflow-x:auto;scroll-behavior:smooth">
   

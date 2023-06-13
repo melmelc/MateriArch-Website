@@ -12,7 +12,7 @@ if (!isset($_SESSION['customer_id']))
 }
 else{
   $c_id = $_SESSION['customer_id'];
-  $tender_id = $_GET['tender'];
+  $c_id = $_GET['compid'];
 
 }
 
@@ -22,17 +22,30 @@ else{
 ?>
 
 <body>
-    <div id="main">
-        <div class="profile" style="display: inline-flex;justify-content: space-evenly;">
-            <img src="assets/ERD Manpro 8.jpg" style="width:30%">
-            <div>
-                <h2>Company Name</h2>
-                <h5>Company Address</h5>
-                <h5>Company Contact</h5>
-                <h5>Company Email</h5>
-                <h5>Company Description</h5>
-                <p>Company Description</p>
-            </div>
+    <div id="main" style="padding-left:50px;padding-right:50px">
+    <div>
+        <br>
+        <h3>Company Profile</h3>
+        <br>            
+        <div style="display: inline-flex;justify-content: space-evenly;">
+        <img src="assets/agra.jpeg" style="width:40%">
+        <div id="content" style="padding-left: 30px">
+        <?php 
+        $qu = "SELECT * FROM company WHERE comp_id=".$c_id;
+        if($conn->query($qu) == TRUE) {
+            $result = $conn->query($qu);
+            $row = $result->fetch_assoc();
+            echo "<h3>".$row['comp_name']."</h3>
+            <hr>
+            <p>".$row['comp_profile']."</p>
+            <h3>Contact Us </h3>
+            <b><p>Address : ".$row['comp_address'].", ".$row['comp_city']."</p>
+            <p>Email : <a href='mailto:".$row['comp_email']."'>".$row['comp_email']."</a></p>
+            <p>Phone Number : <a href='https://wa.me/".$row['comp_phone']."'>".$row['comp_phone']."</a></p></b>";
+        }
+        ?>
+        
+        </div>
         </div>
         <br>
         <br>
@@ -46,19 +59,33 @@ else{
                         <th>Order Name</th>
                         <th>Order Date</th>
                         <th>Order Design</th>
+                        <th>Download Design</th>
                         <th>Buyer Review</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    $q = "SELECT * FROM orders o JOIN request_order ro ON o.ro_id = ro.ro_id WHERE ro.comp_id =".$comp_id;
+                    $q = "SELECT * FROM tender t JOIN request_order ro ON t.ro_id = ro.ro_id JOIN payment p ON p.tender_id = t.tender_id WHERE comp_id =".$c_id;
                     if($conn->query($q) == TRUE) {
                         $result = $conn->query($q);
                         while($row = $result->fetch_assoc()) {
                             $order_name = $row['ro_title'];
                             $order_date = $row['ro_date'];
                             $order_design = $row['ro_design'];
-                            $order_review = $row['ro_review'];
+                            echo "<tr><td>".$order_name."</td>
+                            <td>".$order_date."</td>
+                            <td><img style='width:100px' src='assets/".$order_design."' ></td>";
+                            if($row['agree'] == "yes") {
+                                echo "<td><a href='assets/".$row['ro_design']."'download><button class='btn btn-primary'>Download Design</button></a></td>";
+                            }
+                            else if($row['agree'] == "no"){
+                                echo "<td><button class='btn btn-primary' disabled>Download Design</button></a></td>";
+                            }
+                            
+                            
+                            echo "<td></td>
+                            </tr>";
+                            // $order_review = $row['ro_review'];
                         }
 
                     }
@@ -66,8 +93,8 @@ else{
                     
                     ?>
                 </tbody>
-
             </table>
+                </div>
         </div>
 
     </div>
